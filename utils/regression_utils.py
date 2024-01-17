@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style("whitegrid")
 
-from sklearn import linear_model
-from sklearn.metrics import mean_squared_error, r2_score, roc_curve, auc, precision_recall_curve, f1_score
+from sklearn.metrics import mean_squared_error, roc_curve, auc, precision_recall_curve, f1_score
 
 def get_model_name(params):
     model_name = "xgb_reg-"

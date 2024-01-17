@@ -50,17 +50,17 @@ def run_fine_tuning(preprocessed_data, random_seed_splitting, random_seed_initia
         # Save summary
         save_pickle(summary, f"{output_dir}/summary.pkl")
 
-        results_line = {"Model name": model_name,
+        results_line = pd.DataFrame({"Model name": model_name,
                         "Train RMSE": summary["rmse_train"],
                         "Test RMSE": summary["rmse_test"],
                         "Train ROC": summary["roc_auc_train"],
                         "Test ROC": summary["roc_auc_test"],
                         "Train F1-score": summary["f1_score_train"],
                         "Test F1-score": summary["f1_score_test_train"],
-                        "Test F1-score (train)": summary["f1_score_test"]}
+                        "Test F1-score (train)": summary["f1_score_test"]}, index =[0])
         
         # Concatenate results
-        results_df = results_df.append(results_line, ignore_index=True)
+        results_df = pd.concat([results_df, results_line], ignore_index=True)
         if flag is None:
             results_df.to_excel("data/splits/{}/results/results_fine_tuning.xlsx".format(random_seed_splitting), index=False)
         else:
@@ -109,7 +109,7 @@ def choose_best_model(random_seed_range, flag=None):
             test_roc.append(results_df_list[seed_idx].loc[idx, 'Test ROC'])
             f1_train.append(results_df_list[seed_idx].loc[idx, 'Train F1-score'])
             f1_test.append(results_df_list[seed_idx].loc[idx, 'Test F1-score (train)'])
-        averaged_results_df = averaged_results_df.append({'Model name': model_name,
+        averaged_results_df = pd.concat([averaged_results_df, pd.DataFrame({'Model name': model_name,
                                                         'Mean Train RMSE': np.mean(train_rmse),
                                                         'Mean Test RMSE': np.mean(test_rmse),
                                                         'Mean Train ROC': np.mean(train_roc),
@@ -121,8 +121,7 @@ def choose_best_model(random_seed_range, flag=None):
                                                         'Std Train ROC': np.std(train_roc),
                                                         'Std Test ROC': np.std(test_roc),
                                                         'Std Train F1-score': np.std(f1_train),
-                                                        'Std Test F1-score (train)': np.std(f1_test)
-                                                        }, ignore_index=True)
+                                                        'Std Test F1-score (train)': np.std(f1_test)}, index = [0])], ignore_index=True)
         
 
     # Sort by Mean Test ROC
